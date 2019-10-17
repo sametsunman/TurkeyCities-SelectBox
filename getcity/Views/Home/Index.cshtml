@@ -1,0 +1,134 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+
+<div class="container" id="app">
+
+
+    <select class="form-control" v-model="selectedCountry" @@change="getCity">
+        <option disabled value="">Ülke seçin</option>
+        <option v-for="country in countryList" v-bind:value="country.CountryID">
+            {{ country.CountryName }}
+        </option>
+    </select>
+
+    <select class="form-control" v-model="selectedCity" @@change="getTown">
+        <option disabled value="">Şehir seçin</option>
+        <option v-for="city in cityList" v-bind:value="city.CityID">
+            {{ city.CityName }}
+        </option>
+    </select>
+
+    <select class="form-control" v-model="selectedTown" @@change="getDistrict">
+        <option disabled value="">İlçe seçin</option>
+        <option v-for="town in townList" v-bind:value="town.TownID">
+            {{ town.TownName }}
+        </option>
+    </select>
+
+    <select class="form-control" v-model="selectedDistrict" @@change="getNeighbourhood">
+        <option disabled value="">Semt seçin</option>
+        <option v-for="district in districtList" v-bind:value="district.DistrictID">
+            {{ district.DistrictName }}
+        </option>
+    </select>
+
+    <select class="form-control" v-model="selectedNeighbourhood">
+        <option disabled value="">Mahalle seçin</option>
+        <option v-for="neighbourhood in neighbourhoodList" v-bind:value="town.NeighbourhoodID">
+            {{ neighbourhood.NeighbourhoodName }}
+        </option>
+    </select>
+
+</div>
+
+
+
+
+@section scripts
+{
+    <script src="~/Scripts/vue.js"></script>
+    <script src="~/Scripts/axios-0.19.0.min.js"></script>
+
+
+
+    <script>
+
+
+
+
+        let vm = new Vue({
+            el: '#app',
+            data: {
+                selectedCountry: '212',
+                selectedCity: '',
+                selectedTown: '',
+                selectedDistrict: '',
+                selectedNeighbourhood: '',
+                countryList: [],
+                cityList: [],
+                townList: [],
+                districtList: [],
+                neighbourhoodList: []
+            },
+            methods: {
+                getCity() {
+                    let api = '/Api/City/GetCity?countryID='+this.selectedCountry;
+                    axios.get(api)
+                        .then(response => {
+
+                            this.cityList = response.data;
+
+                        });
+                },
+                getTown() {
+                    let api = '/Api/City/GetTown?cityID='+this.selectedCity;
+                    axios.get(api)
+                        .then(response => {
+
+                            this.townList = response.data;
+
+                        });
+                },
+                getDistrict() {
+                    let api = '/Api/City/GetDistrict?townID='+this.selectedTown;
+                    axios.get(api)
+                        .then(response => {
+
+                            this.districtList = response.data;
+
+                        });
+                },
+                getNeighbourhood() {
+                    let api = '/Api/City/GetNeighbourhood?districtID='+this.selectedDistrict;
+                    axios.get(api)
+                        .then(response => {
+
+                            this.neighbourhoodList = response.data;
+
+                        });
+                }
+            },
+            mounted: function (){
+                    let api = '/Api/City/GetCountry';
+                    axios.get(api)
+                        .then(response => {
+
+                            this.countryList = response.data;
+
+                        });
+                this.getCity();
+
+            }
+
+
+        })
+
+
+
+
+
+    </script>
+
+}
